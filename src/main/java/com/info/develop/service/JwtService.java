@@ -5,8 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -22,8 +20,6 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-
-    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
@@ -55,7 +51,6 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        log.info("Generating JWT token for user: {}", userDetails.getUsername());
         Map<String, Object> extraClaims = new HashMap<>();
         // Add roles to the claims, removing the "ROLE_" prefix for cleaner data on the frontend
         List<String> roles = userDetails.getAuthorities()
@@ -78,9 +73,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        boolean isValid = (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
-        log.debug("Validating token for user '{}'. Is valid: {}", username, isValid);
-        return isValid;
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

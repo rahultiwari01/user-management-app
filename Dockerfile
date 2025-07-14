@@ -1,5 +1,5 @@
 # Stage 1: Build the application using Maven
-FROM maven:3.8.5-openjdk-8 AS build
+FROM maven:3.8.5-openjdk-11 AS build
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -19,12 +19,12 @@ RUN mvn clean package -DskipTests
 # ---
 
 # Stage 2: Create the final, smaller image for running the application
-FROM openjdk:8-jre-slim
+FROM openjdk:11-jre-slim
 
 WORKDIR /app
 
 # Copy the built .jar file from the 'build' stage to the final image
-COPY --from=build /app/target/user-management-app-1.0.0-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 # Expose the port the application runs on
 EXPOSE 8080

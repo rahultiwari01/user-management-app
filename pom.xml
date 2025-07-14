@@ -7,7 +7,7 @@
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Spring Boot Blank Project (from https://github.com/making/spring-boot-blank)</name>
+    <name>User Management REST API</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -17,12 +17,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>com.info.develop.App</start-class>
-        <java.version>1.8</java.version>
-        <lombok.version>1.18.38</lombok.version>
+        <java.version>11</java.version>
         <log4jdbc.log4j2.version>1.16</log4jdbc.log4j2.version>
-        <rest.assured.version>2.3.3</rest.assured.version>
-        <spring-loaded.version>1.2.8.RELEASE</spring-loaded.version>
+        <!-- Versions for lombok and rest-assured are managed by spring-boot-starter-parent -->
     </properties>
 
     <dependencies>
@@ -38,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -51,7 +48,6 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -66,12 +62,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.jayway.restassured</groupId>
+            <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>${rest.assured.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Add these dependencies to your pom.xml -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -95,13 +89,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>springloaded</artifactId>
-                        <version>${spring-loaded.version}</version>
-                    </dependency>
-                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>11</release>
+                </configuration>
             </plugin>
         </plugins>
     </build>
