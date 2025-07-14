@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    # Build the image from the Dockerfile in the current directory
+    build: .
+    # Name the container for easier reference
+    container_name: user-management-app
+    ports:
+      # Map port 8080 on your local machine to port 8080 in the container
+      - "8080:8080"
+    environment:
+      # IMPORTANT: You must provide the Base64 encoded secret key here.
+      # This value should be the same as the one in your application.properties file.
+      - APPLICATION_SECURITY_JWT_SECRET_KEY=VGhpc0lzTXlOZXdTdXBlclN0cm9uZ0FuZFNlY3VyZVNlY3VyZVNlY3JldEtleUZvckt1YmVybmV0ZXMxMjMh

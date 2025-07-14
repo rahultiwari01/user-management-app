@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-management-app-service
+spec:
+  type: LoadBalancer # Use NodePort for local clusters like Minikube
+  selector:
+    app: user-management-app
+  sessionAffinity: None # Explicitly disable sticky sessions
+  ports:
+  - protocol: TCP
+    port: 80 # The port the service will be exposed on
+    targetPort: 8080 # The port your container is listening on
