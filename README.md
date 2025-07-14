@@ -41,10 +41,11 @@ A comprehensive RESTful API for user management, built with Spring Boot and secu
 
     ```properties
     # Database Configuration
-    spring.datasource.url=jdbc:postgresql://localhost:5432/your_db
-    spring.datasource.username=your_username
-    spring.datasource.password=your_password
-    spring.jpa.hibernate.ddl-auto=update
+    spring.datasource.url=jdbc:h2:mem:user-management-app;DB_CLOSE_ON_EXIT=FALSE
+    spring.datasource.driver-class-name=org.h2.Driver
+    spring.datasource.username=sa
+    spring.datasource.password=
+    spring.h2.console.enabled=true
 
     # JWT Secret Key
     jwt.secret.key=your-super-secret-key-that-is-long-and-secure
@@ -71,12 +72,12 @@ The base URL for all endpoints is `/api`.
 
 ### Authentication (`/api/auth`)
 
-| Method | Endpoint             | Description                                                  |
-| :----- | :------------------- | :----------------------------------------------------------- |
-| `POST` | `/login`             | Authenticates a user and returns a JWT token.                |
-| `POST` | `/logout`            | Logs out the current user (requires token).                  |
-| `GET`  | `/status`            | Checks if the current user is authenticated (requires token). |
-| `GET`  | `/info`              | Provides information about authentication endpoints.         |
+| Method | Endpoint  | Description                                                   |
+| :----- | :-------- | :------------------------------------------------------------ |
+| `POST` | `/login`  | Authenticates a user and returns a JWT token.                 |
+| `POST` | `/logout` | Logs out the current user (requires token).                   |
+| `GET`  | `/status` | Checks if the current user is authenticated (requires token). |
+| `GET`  | `/info`   | Provides information about authentication endpoints.          |
 
 **Sample Login Request Body:**
 ```json
@@ -90,25 +91,25 @@ The base URL for all endpoints is `/api`.
 
 These endpoints require a valid JWT token in the `Authorization: Bearer <token>` header.
 
-| Method   | Endpoint                  | Description                                |
-| :------- | :------------------------ | :----------------------------------------- |
-| `GET`    | `/`                       | Get a list of all users.                   |
-| `POST`   | `/`                       | Create a new user.                         |
-| `GET`    | `/{id}`                   | Get a user by their ID.                    |
-| `PUT`    | `/{id}`                   | Update a user's details.                   |
-| `DELETE` | `/{id}`                   | Delete a user by their ID.                 |
-| `PUT`    | `/{id}/password`          | Update a user's password.                  |
-| `GET`    | `/search/email?q={email}` | Search for users by email.                 |
-| `GET`    | `/search/name?q={name}`   | Search for users by name.                  |
-| `GET`    | `/search/username?q={q}`  | Get a user by their username.              |
+| Method   | Endpoint                  | Description                   |
+| :------- | :------------------------ | :---------------------------- |
+| `GET`    | `/`                       | Get a list of all users.      |
+| `POST`   | `/`                       | Create a new user.            |
+| `GET`    | `/{id}`                   | Get a user by their ID.       |
+| `PUT`    | `/{id}`                   | Update a user's details.      |
+| `DELETE` | `/{id}`                   | Delete a user by their ID.    |
+| `PUT`    | `/{id}/password`          | Update a user's password.     |
+| `GET`    | `/search/email?q={email}` | Search for users by email.    |
+| `GET`    | `/search/name?q={name}`   | Search for users by name.     |
+| `GET`    | `/search/username?q={q}`  | Get a user by their username. |
 
 ### Test Endpoints (`/api/test`)
 
 > **Warning:** This endpoint is intended for development and testing purposes only. It should be disabled or removed in a production environment.
 
-| Method | Endpoint               | Description                                     |
-| :----- | :--------------------- | :---------------------------------------------- |
-| `GET`  | `/generate-passwords`  | Generates BCrypt-hashed passwords for testing.  |
+| Method | Endpoint              | Description                                    |
+| :----- | :-------------------- | :--------------------------------------------- |
+| `GET`  | `/generate-passwords` | Generates BCrypt-hashed passwords for testing. |
 
 Alternatively, you can use the `GeneratePasswords.java` utility to generate hashed passwords from the command line.
 
