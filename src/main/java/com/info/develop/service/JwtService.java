@@ -5,9 +5,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.info.develop.config.JwtProperties;
 
 import javax.annotation.PostConstruct;
 import java.security.Key;
@@ -21,18 +24,15 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    @Value("${application.security.jwt.secret-key}")
-    private String secretKey;
-
-    @Value("${application.security.jwt.expiration}")
-    private long jwtExpiration;
+    @Autowired
+    private JwtProperties jwtProperties;
 
     private Key signInKey;
 
     @PostConstruct
     public void init() {
         try {
-            byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+            byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
             this.signInKey = Keys.hmacShaKeyFor(keyBytes);
         } catch (IllegalArgumentException e) {
             // This will cause the application to fail on startup if the key is invalid, which is good practice.
@@ -66,7 +66,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

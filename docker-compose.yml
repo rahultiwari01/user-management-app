@@ -1,15 +1,23 @@
-version: '3.8'
-
+version: '3'
 services:
-  app:
-    # Build the image from the Dockerfile in the current directory
-    build: .
-    # Name the container for easier reference
-    container_name: user-management-app
-    ports:
-      # Map port 8080 on your local machine to port 8080 in the container
-      - "8080:8080"
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
     environment:
-      # IMPORTANT: You must provide the Base64 encoded secret key here.
-      # This value should be the same as the one in your application.properties file.
-      - APPLICATION_SECURITY_JWT_SECRET_KEY=VGhpc0lzTXlOZXdTdXBlclN0cm9uZ0FuZFNlY3VyZVNlY3VyZVNlY3JldEtleUZvckt1YmVybmV0ZXMxMjMh
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1

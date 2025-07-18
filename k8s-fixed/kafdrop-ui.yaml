@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafdrop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafdrop
+  template:
+    metadata:
+      labels:
+        app: kafdrop
+    spec:
+      containers:
+        - name: kafdrop
+          image: obsidiandynamics/kafdrop:latest
+          ports:
+            - containerPort: 9000
+          env:
+            - name: KAFKA_BROKERS
+              value: "kafka-service:9092" # Points to your Kafka service inside the cluster
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafdrop-service
+spec:
+  type: LoadBalancer # Exposes the service externally. On local clusters, maps to localhost.
+  selector:
+    app: kafdrop
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
