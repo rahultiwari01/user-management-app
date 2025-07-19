@@ -1,66 +1,28 @@
 package com.info.develop.model;
 
-import java.math.BigDecimal;
+import lombok.Data;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
+@Data
+@Entity
+@Table(name = "orders")
 public class Order {
 
+    @Id
     private String orderId;
-    private Long customerId; // Corresponds to User ID
-    private List<OrderItem> items;
-    private BigDecimal totalPrice;
+
+    private String customerId; // Links the order to the user (username)
     private Instant orderTimestamp;
 
-    // Default constructor for JSON deserialization
-    public Order() {
-        this.orderId = UUID.randomUUID().toString();
-        this.orderTimestamp = Instant.now();
-    }
-
-    public Order(Long customerId, List<OrderItem> items, BigDecimal totalPrice) {
-        this.orderId = UUID.randomUUID().toString();
-        this.customerId = customerId;
-        this.items = items;
-        this.totalPrice = totalPrice;
-        this.orderTimestamp = Instant.now();
-    }
-
-    // Getters and Setters
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
-
-    public List<OrderItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<OrderItem> items) {
-        this.items = items;
-    }
-
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public Instant getOrderTimestamp() { return orderTimestamp; }
-
-    public void setOrderTimestamp(Instant orderTimestamp) { this.orderTimestamp = orderTimestamp; }
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id") // Creates a foreign key in the order_item table
+    private List<OrderItem> items;
 }
