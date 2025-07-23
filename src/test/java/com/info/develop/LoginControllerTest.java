@@ -1,12 +1,11 @@
 package com.info.develop;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.info.develop.dto.LoginRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 
 import java.util.Map;
@@ -26,6 +25,18 @@ public class LoginControllerTest {
         return "http://localhost:" + port + "/api/auth";
     }
 
+    private ResponseEntity<Map> performLoginRequest(String username, String password) {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername(username);
+        loginRequest.setPassword(password);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<LoginRequest> entity = new HttpEntity<>(loginRequest, headers);
+
+        return restTemplate.postForEntity(getBaseUrl() + "/login", entity, Map.class);
+    }
+
     @Test
     public void testGetAuthInfo() {
         ResponseEntity<Map> response = restTemplate.getForEntity(
@@ -41,16 +52,7 @@ public class LoginControllerTest {
 
     @Test
     public void testSuccessfulLogin() {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("admin");
-        loginRequest.setPassword("password");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<LoginRequest> entity = new HttpEntity<>(loginRequest, headers);
-
-        ResponseEntity<Map> response = restTemplate.postForEntity(
-            getBaseUrl() + "/login", entity, Map.class);
+        ResponseEntity<Map> response = performLoginRequest("admin", "password");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         Map<String, Object> responseBody = response.getBody();
@@ -62,16 +64,7 @@ public class LoginControllerTest {
 
     @Test
     public void testFailedLogin() {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("admin");
-        loginRequest.setPassword("wrongpassword");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<LoginRequest> entity = new HttpEntity<>(loginRequest, headers);
-
-        ResponseEntity<Map> response = restTemplate.postForEntity(
-            getBaseUrl() + "/login", entity, Map.class);
+        ResponseEntity<Map> response = performLoginRequest("admin", "wrongpassword");
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         Map<String, Object> responseBody = response.getBody();
@@ -82,16 +75,7 @@ public class LoginControllerTest {
 
     @Test
     public void testLoginWithNonExistentUser() {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("nonexistent");
-        loginRequest.setPassword("password");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<LoginRequest> entity = new HttpEntity<>(loginRequest, headers);
-
-        ResponseEntity<Map> response = restTemplate.postForEntity(
-            getBaseUrl() + "/login", entity, Map.class);
+        ResponseEntity<Map> response = performLoginRequest("nonexistent", "password");
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         Map<String, Object> responseBody = response.getBody();
@@ -126,16 +110,7 @@ public class LoginControllerTest {
 
     @Test
     public void testSecondUserLogin() {
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("user");
-        loginRequest.setPassword("user123");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<LoginRequest> entity = new HttpEntity<>(loginRequest, headers);
-
-        ResponseEntity<Map> response = restTemplate.postForEntity(
-            getBaseUrl() + "/login", entity, Map.class);
+        ResponseEntity<Map> response = performLoginRequest("user", "user123");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         Map<String, Object> responseBody = response.getBody();
